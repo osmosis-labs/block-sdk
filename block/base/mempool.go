@@ -34,17 +34,9 @@ type (
 )
 
 // NewMempool returns a new Mempool.
-func NewMempool[C comparable](txPriority TxPriority[C], extractor signer_extraction.Adapter, maxTx int) *Mempool[C] {
+func NewMempool[C comparable](_ TxPriority[C], _ signer_extraction.Adapter, _ int) *Mempool[C] {
 	return &Mempool[C]{
-		index: NewPriorityMempool(
-			PriorityNonceMempoolConfig[C]{
-				TxPriority: txPriority,
-				MaxTx:      maxTx,
-			},
-			extractor,
-		),
-		extractor:  extractor,
-		txPriority: txPriority,
+		index: NewNoOpMempool[C](),
 	}
 }
 
