@@ -133,7 +133,7 @@ test-e2e: $(TEST_E2E_DEPS)
 test-unit: use-main
 	@go test -v -race $(shell go list ./... | grep -v tests/)
 
-test-integration: tidy
+test-integration: 
 	@go test -v -race ./tests/integration/... 
 
 test-cover: use-main tidy

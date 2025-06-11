@@ -1,6 +1,7 @@
 package base
 
 import (
+	"github.com/skip-mev/block-sdk/v2/block"
 	"github.com/skip-mev/block-sdk/v2/block/base"
 )
 
@@ -17,6 +18,26 @@ const (
 func NewDefaultLane(cfg base.LaneConfig, matchHandler base.MatchHandler) *base.BaseLane {
 	options := []base.LaneOption{
 		base.WithMatchHandler(matchHandler),
+	}
+
+	lane, err := base.NewBaseLane(
+		cfg,
+		LaneName,
+		options...,
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	return lane
+}
+
+// NewDefaultLaneWithMempool returns a new default lane. The DefaultLane defines a default
+// lane implementation ith a custom mempool.
+func NewDefaultLaneWithMempool(cfg base.LaneConfig, matchHandler base.MatchHandler, mempool block.LaneMempool) *base.BaseLane {
+	options := []base.LaneOption{
+		base.WithMatchHandler(matchHandler),
+		base.WithMempool(mempool),
 	}
 
 	lane, err := base.NewBaseLane(

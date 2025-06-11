@@ -85,9 +85,17 @@ func CreateLanes(app *TestApp) (*mevlane.MEVLane, *base.BaseLane, *base.BaseLane
 		freeMatchHandler,
 	)
 
-	defaultLane := defaultlane.NewDefaultLane(
+	// Create a default mempool for the base lane
+	defaultMempool := base.NewMempoolWithDefaultOrdering(
+		base.DefaultTxPriority(),
+		signerAdapter,
+		1000,
+	)
+
+	defaultLane := defaultlane.NewDefaultLaneWithMempool(
 		defaultConfig,
 		defaultMatchHandler,
+		defaultMempool,
 	)
 
 	return mevLane, freeLane, defaultLane
