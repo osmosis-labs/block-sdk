@@ -51,7 +51,7 @@ func NewMempool[C comparable](txPriority TxPriority[C], extractor signer_extract
 // NewDefaultMempool returns a new default Mempool.
 func NewMempoolWithDefaultOrdering[C comparable](txPriority TxPriority[C], extractor signer_extraction.Adapter, maxTx int) *Mempool[C] {
 	return &Mempool[C]{
-		index:      NewDefaultMempool[C](maxTx),
+		index:      NewDefaultMempool[C](maxTx, extractor),
 		extractor:  extractor,
 		txPriority: txPriority,
 	}
