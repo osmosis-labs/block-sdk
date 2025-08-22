@@ -121,12 +121,8 @@ func (mp *DefaultMempool[C]) Contains(tx sdk.Tx) bool {
 	}
 
 	// Check if we have this sender:nonce combination
-	if element, exists := mp.seen[key]; exists {
-		// Return true only if it's the exact same transaction object
-		return element.Value.(sdk.Tx) == tx
-	}
-
-	return false
+	_, exists := mp.seen[key]
+	return exists
 }
 
 // DefaultIterator implements sdkmempool.Iterator for FIFO mempool
