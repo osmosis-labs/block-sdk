@@ -88,13 +88,15 @@ func (mp *DefaultMempool[C]) Remove(tx sdk.Tx) error {
 		return fmt.Errorf("failed to get tx key for removal: %w", err)
 	}
 
-	// Remove by key
+	// Remove by key if found, error if not found
 	if element, exists := mp.seen[key]; exists {
 		mp.txs.Remove(element)
 		delete(mp.seen, key)
+
+		return nil
 	}
 
-	return nil
+	return sdkmempool.ErrTxNotFound
 }
 
 // Select implements MempoolInterface.

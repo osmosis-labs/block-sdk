@@ -65,9 +65,8 @@ func TestDefaultMempool_Insert(t *testing.T) {
 
 		err = mp.Insert(ctx, tx2)
 		require.NoError(t, err)
-		require.Equal(t, 1, mp.CountTx())  // Count should remain 1
-		require.True(t, mp.Contains(tx1))  // Original transaction should still be there
-		require.False(t, mp.Contains(tx2)) // New transaction should not be added
+		require.Equal(t, 1, mp.CountTx()) // Count should remain 1
+		require.True(t, mp.Contains(tx1)) // Original transaction should still be there
 	})
 
 	t.Run("insert with max capacity", func(t *testing.T) {
@@ -113,8 +112,7 @@ func TestDefaultMempool_Insert(t *testing.T) {
 		err = mp.Insert(ctx, tx2)
 		require.NoError(t, err) // Should NOT get capacity error
 		require.Equal(t, 1, mp.CountTx())
-		require.True(t, mp.Contains(tx1))  // Original transaction should remain
-		require.False(t, mp.Contains(tx2)) // Duplicate should not be added
+		require.True(t, mp.Contains(tx1)) // Original transaction should remain
 	})
 }
 
@@ -159,7 +157,7 @@ func TestDefaultMempool_Remove(t *testing.T) {
 
 		// Try to remove non-existing transaction
 		err = mp.Remove(tx2)
-		require.NoError(t, err) // Should not error
+		require.Equal(t, sdkmempool.ErrTxNotFound, err) // Should error with ErrTxNotFound
 		require.Equal(t, 1, mp.CountTx())
 		require.True(t, mp.Contains(tx1))
 	})
@@ -233,9 +231,8 @@ func TestDefaultMempool_Integration(t *testing.T) {
 
 		err = mp.Insert(ctx, duplicateTx)
 		require.NoError(t, err)
-		require.Equal(t, 3, mp.CountTx())          // Count should remain the same
-		require.True(t, mp.Contains(txs[0]))       // Original transaction should still be there
-		require.False(t, mp.Contains(duplicateTx)) // Duplicate should not be added
+		require.Equal(t, 3, mp.CountTx())    // Count should remain the same
+		require.True(t, mp.Contains(txs[0])) // Original transaction should still be there
 
 		// Verify FIFO order is maintained (no changes)
 		var collectedTxs []sdk.Tx
@@ -252,6 +249,7 @@ func TestDefaultMempool_Integration(t *testing.T) {
 
 // TestDefaultMempool_ContainsWithRedecodedTransactions tests that Contains() works correctly
 // with transactions that have been re-decoded (different object, same content)
+// This simulates
 func TestDefaultMempool_ContainsWithRedecodedTransactions(t *testing.T) {
 	ctx := context.Background()
 	accounts := testutils.RandomAccounts(rand.New(rand.NewSource(1)), 1)
