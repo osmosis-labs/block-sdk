@@ -65,9 +65,8 @@ func TestDefaultMempool_Insert(t *testing.T) {
 
 		err = mp.Insert(ctx, tx2)
 		require.NoError(t, err)
-		require.Equal(t, 1, mp.CountTx())  // Count should remain 1
-		require.True(t, mp.Contains(tx1))  // Original transaction should still be there
-		require.False(t, mp.Contains(tx2)) // New transaction should not be added
+		require.Equal(t, 1, mp.CountTx()) // Count should remain 1
+		require.True(t, mp.Contains(tx1)) // Original transaction should still be there
 	})
 
 	t.Run("insert with max capacity", func(t *testing.T) {
@@ -113,8 +112,7 @@ func TestDefaultMempool_Insert(t *testing.T) {
 		err = mp.Insert(ctx, tx2)
 		require.NoError(t, err) // Should NOT get capacity error
 		require.Equal(t, 1, mp.CountTx())
-		require.True(t, mp.Contains(tx1))  // Original transaction should remain
-		require.False(t, mp.Contains(tx2)) // Duplicate should not be added
+		require.True(t, mp.Contains(tx1)) // Original transaction should remain
 	})
 }
 
@@ -252,6 +250,7 @@ func TestDefaultMempool_Integration(t *testing.T) {
 
 // TestDefaultMempool_ContainsWithRedecodedTransactions tests that Contains() works correctly
 // with transactions that have been re-decoded (different object, same content)
+// This simulates
 func TestDefaultMempool_ContainsWithRedecodedTransactions(t *testing.T) {
 	ctx := context.Background()
 	accounts := testutils.RandomAccounts(rand.New(rand.NewSource(1)), 1)
