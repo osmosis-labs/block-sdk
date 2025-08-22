@@ -157,7 +157,7 @@ func TestDefaultMempool_Remove(t *testing.T) {
 
 		// Try to remove non-existing transaction
 		err = mp.Remove(tx2)
-		require.NoError(t, err) // Should not error
+		require.Equal(t, sdkmempool.ErrTxNotFound, err) // Should error with ErrTxNotFound
 		require.Equal(t, 1, mp.CountTx())
 		require.True(t, mp.Contains(tx1))
 	})
