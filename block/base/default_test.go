@@ -12,6 +12,7 @@ import (
 
 	signer_extraction "github.com/skip-mev/block-sdk/v2/adapters/signer_extraction_adapter"
 	"github.com/skip-mev/block-sdk/v2/block/base"
+	"github.com/skip-mev/block-sdk/v2/block/utils"
 	"github.com/skip-mev/block-sdk/v2/testutils"
 )
 
@@ -247,6 +248,36 @@ func TestDefaultMempool_Integration(t *testing.T) {
 		require.Equal(t, txs[1], collectedTxs[1])
 		require.Equal(t, txs[2], collectedTxs[2])
 	})
+}
+
+// TestDefaultMempool_ContainsWithRedecodedTransactions tests that Contains() works correctly
+// with transactions that have been re-decoded (different object, same content)
+func TestDefaultMempool_ContainsWithRedecodedTransactions(t *testing.T) {
+	ctx := context.Background()
+	accounts := testutils.RandomAccounts(rand.New(rand.NewSource(1)), 1)
+	txConfig := testutils.CreateTestEncodingConfig().TxConfig
+	signerExtractor := signer_extraction.NewDefaultAdapter()
+	mp := base.NewDefaultMempool[int64](5, signerExtractor)
+
+	// Create and insert original transaction
+	originalTx, err := testutils.CreateTx(txConfig, accounts[0], 0, 0, nil, sdk.NewCoin("stake", math.NewInt(100)))
+	require.NoError(t, err)
+	err = mp.Insert(ctx, originalTx)
+	require.NoError(t, err)
+
+	// Encode and decode to create a new object with same content
+	encodedTxs, err := utils.GetEncodedTxs(txConfig.TxEncoder(), []sdk.Tx{originalTx})
+	require.NoError(t, err)
+	decodedTxs, err := utils.GetDecodedTxs(txConfig.TxDecoder(), encodedTxs)
+	require.NoError(t, err)
+	redecodedTx := decodedTxs[0]
+
+	// Verify they are different objects but same content
+	require.False(t, originalTx == redecodedTx, "Should be different objects")
+
+	// Contains() should return true for both original and re-decoded transaction
+	require.True(t, mp.Contains(originalTx), "Should contain original transaction")
+	require.True(t, mp.Contains(redecodedTx), "Should contain re-decoded transaction")
 }
 
 // TestDefaultMempool_ImplementsInterface verifies that DefaultMempool implements MempoolInterface
