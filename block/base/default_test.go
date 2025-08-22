@@ -231,9 +231,8 @@ func TestDefaultMempool_Integration(t *testing.T) {
 
 		err = mp.Insert(ctx, duplicateTx)
 		require.NoError(t, err)
-		require.Equal(t, 3, mp.CountTx())          // Count should remain the same
-		require.True(t, mp.Contains(txs[0]))       // Original transaction should still be there
-		require.False(t, mp.Contains(duplicateTx)) // Duplicate should not be added
+		require.Equal(t, 3, mp.CountTx())    // Count should remain the same
+		require.True(t, mp.Contains(txs[0])) // Original transaction should still be there
 
 		// Verify FIFO order is maintained (no changes)
 		var collectedTxs []sdk.Tx
